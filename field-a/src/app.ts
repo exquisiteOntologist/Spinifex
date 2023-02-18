@@ -17,6 +17,12 @@ const deviate = (num: number, up: number, low: number): number => {
     return deviation
 }
 
+const maxMin = (num: number, max: number, min: number): number => {
+    const numUp = Math.min(num, max) // no more than top
+    const numLow = Math.max(numUp, min) // no less than bottom
+    return numLow
+}
+
 const flip = (): -1 | 1 => Math.random() > 0.5 ? 1 : -1
 
 interface GrassBlade {
@@ -31,7 +37,9 @@ interface GrassBlade {
     x2: number,
     /** Mid-point Y */
     y1: number,
-    y2: number
+    y2: number,
+    /** Radians */
+    rad: number,
     /** Colour */
     c: string,
     /** Line Width */
@@ -39,21 +47,29 @@ interface GrassBlade {
 }
 
 const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade) => {
-    const shift = deviate(1, 3, -3)
-    // b.x1 += shift 
-    // b.x2 += shift
+    updateGrassBlade(b)
     
     ctx.beginPath()
     ctx.strokeStyle = b.c
     ctx.lineWidth = b.lW
     ctx.moveTo(b.x, b.y)
-    ctx.arcTo(b.x1, b.y1, b.x2, b.y2, 40)
+    ctx.arcTo(b.x1, b.y1, b.x2, b.y2, b.rad)
     ctx.stroke()
     ctx.closePath()
 }
 
+
+const updateGrassBlade = (b: GrassBlade) => {
+    const shift = deviate(0.5, 1, -1) * flip()
+    b.x1 = maxMin(b.x1 + shift, b.x + 10, b.x - 10)
+    b.x2 = maxMin(b.x2 + shift, b.x + 50, b.x - 50)
+    // b.x2 += shift
+    // Math.
+}
+
 const createGrassBlade = (x: number, y: number): GrassBlade => {
     const dX: number = deviate(x, 1.5, 0.5)
+    const dY: number = y + (deviate(1, 1, 0) * flip())
     const xF = flip()
     const h = deviate(120, 2, 0.3)
     const rgb = 250 + (deviate(5, 1, -1) * flip())
@@ -63,11 +79,12 @@ const createGrassBlade = (x: number, y: number): GrassBlade => {
         xF,
         h,
         x: dX,
-        y,
+        y: dY,
         x1: dX + (5 * xF),
         x2: dX + (35 * xF),
-        y1: y - (h/2),
-        y2: y - h,
+        y1: dY - (h/2),
+        y2: dY - h,
+        rad: deviate(30, 1.5, 0.5),
         c: `rgba(${rgb}, ${rgb}, ${rgb}, ${alpha})`,
         lW: 1
     }
