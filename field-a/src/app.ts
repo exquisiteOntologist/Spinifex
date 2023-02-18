@@ -3,6 +3,11 @@ const cW = mainCanvas.width = window.innerWidth
 const cH = mainCanvas.height = cW * 0.56
 const mainContext = mainCanvas.getContext('2d')
 
+const cWhite: RGB = [250, 250, 250]
+const cStraw: RGB = [123, 102, 78]
+const cStrawLight: RGB = [114, 95, 71]
+const numBlades = 600
+
 const drawBackground = (ctx: CanvasRenderingContext2D) => {
     ctx.fillStyle = '#0e0e0e'
     ctx.fillRect(0, 0, cW, cH)
@@ -24,6 +29,8 @@ const maxMin = (num: number, max: number, min: number): number => {
 }
 
 const flip = (): -1 | 1 => Math.random() > 0.5 ? 1 : -1
+
+type RGB = [number, number, number]
 
 interface GrassBlade {
     /** Direction multiplier (-1 OR 1) */
@@ -63,16 +70,14 @@ const updateGrassBlade = (b: GrassBlade) => {
     const shift = deviate(0.5, 1, -1) * flip()
     b.x1 = maxMin(b.x1 + shift, b.x + 10, b.x - 10)
     b.x2 = maxMin(b.x2 + shift, b.x + 50, b.x - 50)
-    // b.x2 += shift
-    // Math.
 }
 
-const createGrassBlade = (x: number, y: number): GrassBlade => {
+const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): GrassBlade => {
     const dX: number = deviate(x, 1.5, 0.5)
     const dY: number = y + (deviate(1, 1, 0) * flip())
     const xF = flip()
     const h = deviate(120, 2, 0.3)
-    const rgb = 250 + (deviate(5, 1, -1) * flip())
+    const rgbDev = (deviate(5, 1, -1) * flip())
     const alpha = 0.5 + deviate(0.25, 1.5, 0.5)
 
     const b: GrassBlade = {
@@ -85,19 +90,21 @@ const createGrassBlade = (x: number, y: number): GrassBlade => {
         y1: dY - (h/2),
         y2: dY - h,
         rad: deviate(30, 1.5, 0.5),
-        c: `rgba(${rgb}, ${rgb}, ${rgb}, ${alpha})`,
+        c: `rgba(${rgbBase[0] + rgbDev}, ${rgbBase[1] + rgbDev}, ${rgbBase[2] + rgbDev}, ${alpha})`,
         lW: 1
     }
 
     return b
 }
 
-const numBlades = 600
-const grassBlades: GrassBlade[] = []
-const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+const grassBladesA: GrassBlade[] = []
+const grassBladesB: GrassBlade[] = []
+const grassBladesC: GrassBlade[] = []
+
+const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: number, rgb: RGB, grassBlades: GrassBlade[]) => {
     if (grassBlades.length <= numBlades) {
         for (let i = 0; i < numBlades; i++) {
-            grassBlades.push(createGrassBlade(x, y))
+            grassBlades.push(createGrassBlade(x, y, rgb))
         }
     }
 
@@ -125,7 +132,9 @@ const animFrames = (ctx: CanvasRenderingContext2D) => {
 const draw = (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, cW, cH)
     drawBackground(ctx)
-    drawGrassBlades(ctx, cW / 2, cH / 2)
+    drawGrassBlades(ctx, cW / 2 - 30, cH / 2 - 10, cStraw, grassBladesA)
+    drawGrassBlades(ctx, cW / 2 + 20, cH / 2 - 5, cStrawLight, grassBladesB)
+    drawGrassBlades(ctx, cW / 2, cH / 2, cStraw, grassBladesC)
     animFrames(ctx)
     window.requestAnimationFrame(() => draw(ctx))
 }
