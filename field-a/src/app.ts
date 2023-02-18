@@ -50,7 +50,9 @@ interface GrassBlade {
     /** Colour */
     c: string,
     /** Line Width */
-    lW: number
+    lW: number,
+    /** Rotation */
+    rot: number
 }
 
 const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade) => {
@@ -59,17 +61,20 @@ const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade) => {
     ctx.beginPath()
     ctx.strokeStyle = b.c
     ctx.lineWidth = b.lW
-    ctx.moveTo(b.x, b.y)
+    ctx.translate(b.x, b.y)
+    ctx.moveTo(0, 0)
+    ctx.rotate((b.rot * Math.PI) / 180);
     ctx.arcTo(b.x1, b.y1, b.x2, b.y2, b.rad)
     ctx.stroke()
     ctx.closePath()
+    ctx.resetTransform()
 }
 
 
 const updateGrassBlade = (b: GrassBlade) => {
     const shift = deviate(0.5, 1, -1) * flip()
-    b.x1 = maxMin(b.x1 + shift, b.x + 10, b.x - 10)
-    b.x2 = maxMin(b.x2 + shift, b.x + 50, b.x - 50)
+    b.x1 = maxMin(b.x1 + shift, 10, 0 - 10)
+    b.x2 = maxMin(b.x2 + shift, 50, 0 - 50)
 }
 
 const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): GrassBlade => {
@@ -85,13 +90,14 @@ const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): GrassBla
         h,
         x: dX,
         y: dY,
-        x1: dX + (5 * xF),
-        x2: dX + (35 * xF),
-        y1: dY - (h/2),
-        y2: dY - h,
+        x1: 0 + (5 * xF),
+        x2: 0 + (35 * xF),
+        y1: 0 - (h/2),
+        y2: 0 - h,
         rad: deviate(30, 1.5, 0.5),
         c: `rgba(${rgbBase[0] + rgbDev}, ${rgbBase[1] + rgbDev}, ${rgbBase[2] + rgbDev}, ${alpha})`,
-        lW: 1
+        lW: 1,
+        rot: -1 * deviate(30, 1.5, -1.5)
     }
 
     return b
