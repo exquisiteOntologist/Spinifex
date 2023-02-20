@@ -1,4 +1,5 @@
 import { createBall, drawBall, initBallControl, updateBall } from './_ball'
+import { Presence } from './_types'
 
 const mainCanvas = document.getElementById('mainCanvas') as HTMLCanvasElement
 const cW = mainCanvas.width = window.innerWidth
@@ -57,8 +58,8 @@ interface GrassBlade {
     rot: number
 }
 
-const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade) => {
-    updateGrassBlade(b)
+const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade, objects: Presence[]) => {
+    updateGrassBlade(b, objects)
     
     ctx.beginPath()
     ctx.strokeStyle = b.c
@@ -72,11 +73,31 @@ const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade) => {
     ctx.resetTransform()
 }
 
+interface Pos {
+    xL: number,
+    xR: number,
+    zT: number,
+    zB: number
+}
 
-const updateGrassBlade = (b: GrassBlade) => {
+const pos = (o: Presence): Pos => {
+    const halfWidth = o.width / 2
+    const xL = o.x - halfWidth
+    const xR = o.x + halfWidth
+    const zT = o.y - halfWidth
+    const zB = o.y + halfWidth
+    
+    return { xL, xR, zT, zB }
+}
+
+const updateGrassBlade = (b: GrassBlade, objects: Presence[]) => {
     const shift = deviate(0.5, 1, -1) * flip()
     b.x1 = maxMin(b.x1 + shift, 10, 0 - 10)
     b.x2 = maxMin(b.x2 + shift, 50, 0 - 50)
+
+    if (objects.map(pos).some(o => b.x > o.xL && b.x < o.xR && b.y > o.zT && b.y < o.zB)) {
+        b.rot = -1 * deviate(70, 1.5, -1.5)
+    }
 }
 
 const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): GrassBlade => {
@@ -109,7 +130,7 @@ const grassBladesA: GrassBlade[] = []
 const grassBladesB: GrassBlade[] = []
 const grassBladesC: GrassBlade[] = []
 
-const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: number, rgb: RGB, grassBlades: GrassBlade[]) => {
+const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: number, rgb: RGB, grassBlades: GrassBlade[], objects: Presence[]) => {
     if (grassBlades.length <= numBlades) {
         for (let i = 0; i < numBlades; i++) {
             grassBlades.push(createGrassBlade(x, y, rgb))
@@ -117,7 +138,7 @@ const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: number, rg
     }
 
     for (let i = 0; i < numBlades; i++) {
-        drawGrassBlade(ctx, grassBlades[i])
+        drawGrassBlade(ctx, grassBlades[i], objects)
     }
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -141,12 +162,15 @@ const animFrames = (ctx: CanvasRenderingContext2D) => {
 
 const b = createBall(cW / 2, (cH / 2) + 100)
 initBallControl(b)
+
+const sceneObjects: Presence[] = [b]
+
 const draw = (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, cW, cH)
     drawBackground(ctx)
-    drawGrassBlades(ctx, cW / 2 - 30, cH / 2 - 10, cStraw, grassBladesA)
-    drawGrassBlades(ctx, cW / 2 + 20, cH / 2 - 5, cStrawLight, grassBladesB)
-    drawGrassBlades(ctx, cW / 2, cH / 2, cStraw, grassBladesC)
+    drawGrassBlades(ctx, cW / 2 - 30, cH / 2 - 10, cStraw, grassBladesA, sceneObjects)
+    drawGrassBlades(ctx, cW / 2 + 20, cH / 2 - 5, cStrawLight, grassBladesB, sceneObjects)
+    drawGrassBlades(ctx, cW / 2, cH / 2, cStraw, grassBladesC, sceneObjects)
     updateBall(b)
     drawBall(ctx, b)
     animFrames(ctx)

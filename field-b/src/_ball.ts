@@ -1,12 +1,15 @@
 // the ball moves through grass and displaces it
 
-interface Ball {
+import { Presence } from "./_types"
+
+export interface Ball extends Presence {
     x: number,
     y: number,
     speed: number,
     direction: number,
     xSpeed: number,
-    ySpeed: number
+    ySpeed: number,
+    width: number
 }
 
 export const createBall = (x: number, y: number) => {
@@ -16,7 +19,8 @@ export const createBall = (x: number, y: number) => {
         speed: 0,
         direction: 0,
         xSpeed: 0,
-        ySpeed: 0
+        ySpeed: 0,
+        width: 64
     }
 
     return b
@@ -73,7 +77,6 @@ export const controlBall = (e: KeyboardEvent, b: Ball) => {
 export const updateBall = (b: Ball) => {
     dragBall(b)
     moveBall(b)
-    console.log('updated ball', b)
 }
 
 export const initBallControl = (b: Ball) => window.addEventListener('keydown', (e) => controlBall(e, b))
@@ -83,7 +86,7 @@ export const drawBall = (ctx: CanvasRenderingContext2D, b: Ball) => {
     ctx.beginPath()
     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
     // ctx.ellipse(0, 0, 32, 32, Math.PI / 4, 0, 0, false)
-    ctx.ellipse(b.x, b.y, 32, 32, Math.PI / 4, 0, 2 * Math.PI);
+    ctx.ellipse(b.x, b.y, b.width / 2, b.width / 2, Math.PI / 4, 0, 2 * Math.PI);
     ctx.fill()
     ctx.closePath()
 }
