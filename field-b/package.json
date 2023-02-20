@@ -1,0 +1,14 @@
+{
+  "name": "field-a",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "parcel": "^2.8.3"
+  }
+}
