@@ -90,13 +90,18 @@ const pos = (o: Presence): Pos => {
     return { xL, xR, zT, zB }
 }
 
+const rotGrassDown = -1 * deviate(70, 1.5, -1.5)
+const rotGrassUp = -1 * deviate(30, 1.5, -1.5)
+
 const updateGrassBlade = (b: GrassBlade, objects: Presence[]) => {
     const shift = deviate(0.5, 1, -1) * flip()
     b.x1 = maxMin(b.x1 + shift, 10, 0 - 10)
     b.x2 = maxMin(b.x2 + shift, 50, 0 - 50)
 
     if (objects.map(pos).some(o => b.x > o.xL && b.x < o.xR && b.y > o.zT && b.y < o.zB)) {
-        b.rot = -1 * deviate(70, 1.5, -1.5)
+        b.rot = rotGrassDown
+    } else {
+        b.rot = rotGrassUp
     }
 }
 
@@ -120,7 +125,7 @@ const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): GrassBla
         rad: deviate(30, 1.5, 0.5),
         c: `rgba(${rgbBase[0] + rgbDev}, ${rgbBase[1] + rgbDev}, ${rgbBase[2] + rgbDev}, ${alpha})`,
         lW: 1,
-        rot: -1 * deviate(30, 1.5, -1.5)
+        rot: rotGrassUp
     }
 
     return b
