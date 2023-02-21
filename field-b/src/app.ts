@@ -1,4 +1,5 @@
 import { createBall, drawBall, initBallControl, updateBall } from './_ball'
+import { drawShrub } from './_shrub'
 import { cStraw, cStrawLight, drawGrassBlades, GrassBlade } from './_spinifex'
 import { Presence } from './_types'
 
@@ -44,9 +45,12 @@ const sceneObjects: Presence[] = [b]
 const draw = (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, cW, cH)
     drawBackground(ctx)
+    drawShrub(ctx, (cW / 2) - 250, (cH / 2) - 60)
     drawGrassBlades(ctx, cW / 2 - 30, cH / 2 - 10, cStraw, grassBladesA, sceneObjects)
+    drawShrub(ctx, (cW / 2) * 1.5, (cH / 2) - 19)
     drawGrassBlades(ctx, cW / 2 + 20, cH / 2 - 5, cStrawLight, grassBladesB, sceneObjects)
     drawGrassBlades(ctx, cW / 2, cH / 2, cStraw, grassBladesC, sceneObjects)
+    drawShrub(ctx, (cW / 2) - 80, (cH / 2) + 20)
     updateBall(b)
     drawBall(ctx, b)
     animFrames(ctx)

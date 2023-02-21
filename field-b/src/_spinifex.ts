@@ -61,6 +61,7 @@ export const updateGrassBlade = (b: GrassBlade, objects: Presence[]) => {
     }
 }
 
+const aliasAdjust = 0.5
 export const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): GrassBlade => {
     const dX: number = deviate(x, 1.5, 0.5)
     const dY: number = y + (deviate(1, 1, 0) * flip())
@@ -72,8 +73,8 @@ export const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): G
     const b: GrassBlade = {
         xF,
         h,
-        x: dX,
-        y: dY,
+        x: dX + aliasAdjust,
+        y: dY + aliasAdjust,
         x1: 0 + (5 * xF),
         x2: 0 + (35 * xF),
         y1: 0 - (h/2),
@@ -96,13 +97,13 @@ export const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: num
         }
     }
 
-    ctx.translate(0.5, 0.5)
+    // ctx.translate(0.5, 0.5)
 
     for (let i = 0; i < numBlades; i++) {
         drawGrassBlade(ctx, grassBlades[i], objects)
     }
 
-    ctx.translate(0, 0)
+    // ctx.translate(0, 0)
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
