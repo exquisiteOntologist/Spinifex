@@ -15,6 +15,7 @@ const numSteps = rotEnd - rotStart
 const thickness = 6
 const width = 120
 const height = 60
+const heightSag = 5
 
 export interface ShrubLeaf {
     x: number,
@@ -44,11 +45,14 @@ export const createShrub = (x: number, y: number): Shrub => {
         for (let i = rotStart; i < rotEnd; i++) {
             const sC = cShrubs[(tI + iP) % (cShrubs.length - 1)]
             const sX = x + xStart + (baseWidth / numSteps * i) + deviate(1, 3, -3)
-            const sH = baseHeight - deviate(baseHeight / 4, 1.5, -1.5)
+            // curveY is used to add to Height and also to say on the Y
+            const curveI = (i < 0 ? i : -i)
+            const curveY = heightSag / (numSteps / 2) * curveI - (curveI / numSteps)
+            const sH = baseHeight - deviate(baseHeight / 4, 1.5, -1.5) + curveY
 
             const shrubLeaf: ShrubLeaf = {
                 x: sX + 0.5,
-                y: y + tI + 0.5,
+                y: y + tI + curveY + 0.5,
                 h: sH,
                 c: `rgba(${sC.join(',')})`,
                 rot: i
@@ -74,37 +78,8 @@ export const drawShrub = (ctx: CanvasRenderingContext2D, shrub: Shrub) => {
         ctx.moveTo(0, 0)
         ctx.rotate((leaf.rot + deviate(2, 2, 0)) / 180);
         ctx.lineTo(0, - leaf.h)
-        // ctx.arcTo(b.x1, b.y1, b.x2, b.y2, b.rad)
         ctx.stroke()
         ctx.closePath()
         ctx.resetTransform()
     })
-
-    /* for (let tI = 0; tI < thickness; tI++) {
-        const offset = tI * 2
-        const baseWidth = width - offset
-        const baseHeight = height - ((height / thickness) * tI)
-        const xStart = -(baseWidth / 2) - (offset / 2)
-        
-        let iP: number = 0
-        for (let i = rotStart; i < rotEnd; i++) {
-            const sC = cShrubs[(tI + iP) % (cShrubs.length - 1)]
-            const sX = x + xStart + (baseWidth / numSteps * i) + deviate(1, 3, -3)
-            const sH = baseHeight - deviate(baseHeight / 4, 1.5, -1.5)
-
-            ctx.beginPath()
-            ctx.strokeStyle = `rgba(${sC.join(',')})`
-            ctx.lineWidth = 2
-            ctx.translate(sX + 0.5, y + tI + 0.5)
-            ctx.moveTo(0, 0)
-            ctx.rotate((i * Math.PI) / 180);
-            ctx.lineTo(0, - sH)
-            // ctx.arcTo(b.x1, b.y1, b.x2, b.y2, b.rad)
-            ctx.stroke()
-            ctx.closePath()
-            ctx.resetTransform()  
-
-            iP++
-        }
-    } */
 }
