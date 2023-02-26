@@ -1,8 +1,8 @@
 import { Loopable, animate, renderAnims } from './utils/_anim'
 import { animFrames } from './utils/_debugging'
 import { createBall, drawBall, initBallControl, updateBall } from './_ball'
-import { drawGhost } from './_ghosts'
-import { createShrub, drawShrub, Shrub, ShrubLoop } from './_shrub'
+// import { drawGhost } from './_ghosts'
+import { Shrub, ShrubLoop } from './_shrub'
 import { cStraw, cStrawLight, drawGrassBlades, GrassBlade } from './_spinifex'
 import { Presence } from './_types'
 
@@ -21,15 +21,11 @@ const drawBackground = (ctx: CanvasRenderingContext2D) => {
 const grassBladesA: GrassBlade[] = []
 const grassBladesB: GrassBlade[] = []
 const grassBladesC: GrassBlade[] = []
-// const shrubA: Shrub = {}
-const shrubA = new ShrubLoop(300, 200, 300 / 2, 200 / 2)
-// const shrubB: Shrub = {}
-const shrubC: Shrub = {}
 
 const b = createBall(cW / 2 * 0.7, (cH / 2) + 100)
 initBallControl(b)
 
-const loops: Loopable<unknown>[] = [shrubA]
+const loops: Loopable<unknown>[] = []
 const sceneObjects: Presence[] = [b]
 
 const draw = async (ctx: CanvasRenderingContext2D) => {
@@ -40,7 +36,7 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
     // drawShrub(ctx, (cW / 2) * 1.5, (cH / 2) - 19, shrubB)
     drawGrassBlades(ctx, cW / 2 + 20, cH / 2 - 5, cStrawLight, grassBladesB, sceneObjects)
     drawGrassBlades(ctx, cW / 2, cH / 2, cStraw, grassBladesC, sceneObjects)
-    drawShrub(ctx, (cW / 2) - 80, (cH / 2) + 20, shrubC)
+    // drawShrub(ctx, (cW / 2) - 80, (cH / 2) + 20, shrubC)
 
     const renders = animate(loops)
     renderAnims(ctx, renders)
@@ -52,5 +48,16 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
     window.requestAnimationFrame(() => draw(ctx))
 }
 
-if (mainContext) draw(mainContext)
+const initMain = () => {
+    const shrubA = new ShrubLoop(300, 128, (cW / 2) * 1.5, (cH / 2) * 0.95)
+    const shrubB = new ShrubLoop(300, 128, (cW / 2) * 0.9, (cH / 2) * 1.1)
+    const shrubC = new ShrubLoop(300, 128, (cW / 2) * 0.7, (cH / 2) * 0.9)
+
+    loops.push(shrubA, shrubB, shrubC)
+}
+
+if (mainContext) {
+    initMain()
+    draw(mainContext)
+}
 

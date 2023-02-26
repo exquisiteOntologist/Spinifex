@@ -1,9 +1,9 @@
 // shrub is a very small bush
 
 import { RGB } from "./_types"
+import { FramesAngles, Loopable, LoopOut } from "./utils/_anim"
 import { createCanvas } from "./utils/_canvas"
 import { deviate } from "./utils/_common"
-import { FramesAngles, Loopable, LoopOut } from "./utils/_anim"
 
 export const cShrubA: RGB = [33, 29, 16]
 export const cShrubB: RGB = [43, 42, 25]
@@ -75,7 +75,7 @@ export const drawShrub = (ctx: CanvasRenderingContext2D, x: number, y: number, s
         ctx.strokeStyle = leaf.c
         ctx.lineWidth = 2
         ctx.shadowColor = leaf.c
-        // ctx.shadowBlur = 1 // <- EXTREME PERFORMANCE IMPACT
+        ctx.shadowBlur = 1 // <- EXTREME PERFORMANCE IMPACT
         ctx.translate(leaf.x, leaf.y)
         ctx.moveTo(0, 0)
         ctx.rotate((leaf.rot + deviate(2, 2, 0)) / 180);
@@ -87,13 +87,15 @@ export const drawShrub = (ctx: CanvasRenderingContext2D, x: number, y: number, s
 }
 
 export class ShrubLoop implements Loopable<Shrub> {
+    x: number
+    y: number
     alive = true
     angle = 0
     // @TODO: Replace with AnimCanvas object
     ctx: CanvasRenderingContext2D
     instance = {}
     rendered: FramesAngles<Shrub> = { rFrames: { 0: [] }, rState: { 0: [] } }
-    targetFrames = 180
+    targetFrames = 3 // 180
     frame = 0
 
     render = (): LoopOut<Shrub, Shrub> => {
@@ -120,10 +122,7 @@ export class ShrubLoop implements Loopable<Shrub> {
     
     draw = () => drawShrub(this.ctx, this.x, this.y, this.instance)
     
-    init = () => this.instance = createShrub(this.x, this.y)
-
-    x: number
-    y: number
+    init = () => this.instance = createShrub(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2)
 
     constructor(width: number, height: number, x: number, y: number) {
         this.ctx = createCanvas(width, height)

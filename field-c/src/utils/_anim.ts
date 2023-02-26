@@ -1,3 +1,5 @@
+import { XY } from "../_types";
+
 export type RenderedFrame = ImageData
 export type DegreeKey = number;
 
@@ -15,7 +17,7 @@ export interface LoopOut<AnimType, FrameState> {
     imageData: ImageData
 }
 
-export interface Loopable<AnimType, FrameState = AnimType> {
+export interface Loopable<AnimType, FrameState = AnimType> extends XY {
     /** Don't render when dead */
     alive: boolean
     /** Current angle we are rendering */
@@ -46,9 +48,9 @@ export const animate = (lArray: Loopable<unknown>[]): LoopOut<unknown, unknown>[
 
 export const renderAnims = async (ctx: CanvasRenderingContext2D, rArray: LoopOut<unknown, unknown>[]) => await Promise.all(rArray.map(async r => {
     const bitmap = await createImageBitmap(r.imageData)
-    ctx.drawImage(bitmap, 0, 0)
+    ctx.drawImage(bitmap, r.loopable.x, r.loopable.y)
 
-    // putImageData doesn't respect transparent pixels
+    // putImageData doesn't respect transparent pixels (drawImage does)
     // ctx.putImageData(r.imageData, 0, 0)
 }))
 
