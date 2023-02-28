@@ -24,7 +24,7 @@ export interface Loopable<AnimType, FrameState = AnimType> extends XY {
     angle: number
     /** Parent rendering context */
     pCtx?: CanvasRenderingContext2D
-    /** Canvas rendering context */
+    /** Own canvas rendering context */
     ctx: CanvasRenderingContext2D
     instance: AnimType
     /** Previously rendered frames. Use to avoid waste. */

@@ -11,6 +11,10 @@ h1 {
     text-align: center;
 }
 
+.comic {
+    font-family: cursive;
+}
+
 canvas {
     max-width: 100%;
 }

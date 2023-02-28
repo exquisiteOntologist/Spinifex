@@ -3,7 +3,7 @@
 import { RGB } from "./_types"
 import { FramesAngles, Loopable, LoopOut } from "./utils/_anim"
 import { createCanvas } from "./utils/_canvas"
-import { deviate } from "./utils/_common"
+import { deviate, flip } from "./utils/_common"
 
 export const cShrubA: RGB = [33, 29, 16]
 export const cShrubB: RGB = [43, 42, 25]
@@ -75,7 +75,7 @@ export const drawShrub = (ctx: CanvasRenderingContext2D, x: number, y: number, s
         ctx.strokeStyle = leaf.c
         ctx.lineWidth = 2
         ctx.shadowColor = leaf.c
-        ctx.shadowBlur = 1 // <- EXTREME PERFORMANCE IMPACT
+        ctx.shadowBlur = 1 // <- EXTREME PERFORMANCE IMPACT ! ! !
         ctx.translate(leaf.x, leaf.y)
         ctx.moveTo(0, 0)
         ctx.rotate((leaf.rot + deviate(2, 2, 0)) / 180);
@@ -91,31 +91,49 @@ export class ShrubLoop implements Loopable<Shrub> {
     y: number
     alive = true
     angle = 0
-    // @TODO: Replace with AnimCanvas object
     ctx: CanvasRenderingContext2D
     instance = {}
+    reverseLoop = false
     rendered: FramesAngles<Shrub> = { rFrames: { 0: [] }, rState: { 0: [] } }
-    targetFrames = 3 // 180
+    targetFrames = 180 // 180
     frame = 0
+    renderPass = 0
 
     render = (): LoopOut<Shrub, Shrub> => {
-        const renderedFrames = this.rendered.rFrames[this.angle]
-        if (!renderedFrames) this.rendered.rFrames[this.angle] = []
+        let renderedFrames = this.rendered.rFrames[this.angle]
+        if (!renderedFrames) renderedFrames = this.rendered.rFrames[this.angle] = []
 
-        const frameAlreadyRendered = (this.frame + 1) <= renderedFrames.length
+        if (this.frame === 0 && renderedFrames.length) {
+            // const brokenFrame = {...renderedFrames[0]}
+            // console.log('broken frame', brokenFrame)
+            // renderedFrames.splice(0, 1, renderedFrames[renderedFrames.length - 1]) // first frame is shit
+            renderedFrames.splice(0, 1) // first frame is shit
+            // this.frame = 1
+        }
+
+
+        const frameAlreadyRendered = this.frame < renderedFrames.length
         const framesBelowTarget = renderedFrames.length <= this.targetFrames
-
         if (!frameAlreadyRendered && framesBelowTarget) {
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
             this.draw()
             renderedFrames.push(this.ctx.getImageData(0, 0, this.ctx.canvas.width, this.ctx.canvas.height))
         }
         
+        // const renderedFrame = renderedFrames[Math.min(Math.round(Math.random() * 10), renderedFrames.length - 1)]
+        // const frameIndex = (renderedFrames.length > 1 && flip() === 1) ? 2: 0
+        // const renderedFrame = renderedFrames[frameIndex]
         const renderedFrame = renderedFrames[this.frame]
 
         if (!renderedFrame) console.error('no rendered frame', this.frame, renderedFrames)
 
-        this.frame = (this.frame + 1) % (this.targetFrames + 1)
+        const isLastFrame = this.frame === (renderedFrames.length - 1)
+        if (this.reverseLoop && isLastFrame) renderedFrames.reverse()
+
+        this.frame = (this.frame + 1) % this.targetFrames
+        this.renderPass++
+
+        // console.log('rendered frame', this.targetFrames, renderedFrames, this.frame, /* pFrame, frameIndex, */ renderedFrame)
 
         return { loopable: this, imageData: renderedFrame }
     }

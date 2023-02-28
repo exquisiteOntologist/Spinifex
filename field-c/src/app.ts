@@ -29,14 +29,16 @@ const loops: Loopable<unknown>[] = []
 const sceneObjects: Presence[] = [b]
 
 const draw = async (ctx: CanvasRenderingContext2D) => {
+    // await new Promise(r => setTimeout(() => {
+    //     r(1)
+    // }, 3000))
+
     ctx.clearRect(0, 0, cW, cH)
     drawBackground(ctx)
-    // drawShrub(ctx, (cW / 2) - 250, (cH / 2) - 60, shrubA)
+
     drawGrassBlades(ctx, cW / 2 - 30, cH / 2 - 10, cStraw, grassBladesA, sceneObjects)
-    // drawShrub(ctx, (cW / 2) * 1.5, (cH / 2) - 19, shrubB)
     drawGrassBlades(ctx, cW / 2 + 20, cH / 2 - 5, cStrawLight, grassBladesB, sceneObjects)
     drawGrassBlades(ctx, cW / 2, cH / 2, cStraw, grassBladesC, sceneObjects)
-    // drawShrub(ctx, (cW / 2) - 80, (cH / 2) + 20, shrubC)
 
     const renders = animate(loops)
     renderAnims(ctx, renders)
@@ -45,6 +47,7 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
     drawBall(ctx, b)
     // drawGhost(ctx, cW / 2 + 100, cH / 2 + 60)
     animFrames(ctx, cW, cH)
+
     window.requestAnimationFrame(() => draw(ctx))
 }
 
