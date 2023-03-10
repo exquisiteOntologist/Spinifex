@@ -2,6 +2,8 @@
 
 import { Presence, RGB } from './_types'
 import { deviate, flip, maxMin, pos } from './utils/_common'
+import { FramesAngles, Loopable, LoopOut } from './utils/_anim'
+import { createCanvas } from './utils/_canvas'
 
 export const cWhite: RGB = [250, 250, 250]
 export const cStraw: RGB = [123, 102, 78]
@@ -31,6 +33,10 @@ export interface GrassBlade {
     rot: number
     /** When trampled, trample to the left? */
     trampleLeft: boolean
+}
+
+export interface Spinifex {
+    blades: GrassBlade[]
 }
 
 export const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade, objects: Presence[]) => {
@@ -94,14 +100,18 @@ export const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): G
     return b
 }
 
-
-
-export const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: number, rgb: RGB, grassBlades: GrassBlade[], objects: Presence[]) => {
-    if (grassBlades.length <= numBlades) {
+export const createGrassBlades = (x: number, y: number, rgb: RGB, blades: GrassBlade[]): GrassBlade[] => {
+    if (blades.length <= numBlades) {
         for (let i = 0; i < numBlades; i++) {
-            grassBlades.push(createGrassBlade(x, y, rgb))
+            blades.push(createGrassBlade(x, y, rgb))
         }
     }
+
+    return blades
+}
+
+export const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: number, rgb: RGB, blades: GrassBlade[], objects: Presence[]) => {
+    const grassBlades = createGrassBlades(x, y, rgb, blades)
 
     // ctx.translate(0.5, 0.5)
 
@@ -113,3 +123,52 @@ export const drawGrassBlades = (ctx: CanvasRenderingContext2D, x: number, y: num
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
+export const createSpinifex = (x: number, y: number, rgb: RGB): Spinifex => {
+    const spinifex: Spinifex = {
+        blades: createGrassBlades(x, y, rgb, [])
+    }
+
+    return spinifex
+}
+
+export const drawSpinifex = (ctx: CanvasRenderingContext2D, x: number, y: number, instance: Spinifex, rgb: RGB) => {
+    drawGrassBlades(ctx, x, y, rgb, instance.blades, [])
+}
+
+export class SpinifexLoop implements Loopable<Spinifex> {
+    x: number
+    y: number
+    alive = true
+    angle = 0
+    ctx: CanvasRenderingContext2D
+    instance: Spinifex = { blades: [] }
+    reverseLoop = false
+    rendered: FramesAngles<Spinifex> = { rFrames: { 0: [] }, rState: { 0: [] } }
+    targetFrames = 30 // 180
+    frame = 0
+    renderPass = 0
+
+    rgb!: RGB
+
+    render = (): LoopOut<Spinifex, Spinifex> => {
+        this.draw()
+        const renderFrame = this.ctx.getImageData(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+
+        this.renderPass++
+
+        return { loopable: this, imageData: renderFrame }
+    }
+
+    draw = () => drawSpinifex(this.ctx, this.x, this.y, this.instance, this.rgb)
+    
+    init = () => this.instance = createSpinifex(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, this.rgb)
+
+    constructor(width: number, height: number, x: number, y: number, rgb: RGB) {
+        this.ctx = createCanvas(width, height)
+        this.x = x,
+        this.y = y
+        this.rgb = rgb
+
+        this.init()
+    }
+}
