@@ -36,7 +36,7 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, cW, cH)
     drawBackground(ctx)
 
-    drawGrassBlades(ctx, cW / 2 - 30, cH / 2 - 10, cStraw, grassBladesA, sceneObjects)
+    drawGrassBlades(ctx, cW / 2 - 30, cH / 2 - 15, cStraw, grassBladesA, sceneObjects)
     drawGrassBlades(ctx, cW / 2 + 20, cH / 2 - 5, cStrawLight, grassBladesB, sceneObjects)
     drawGrassBlades(ctx, cW / 2, cH / 2, cStraw, grassBladesC, sceneObjects)
 
@@ -52,9 +52,9 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
 }
 
 const initMain = () => {
-    const shrubA = new ShrubLoop(300, 128, (cW / 2) * 1.5, (cH / 2) * 0.95)
-    const shrubB = new ShrubLoop(300, 128, (cW / 2) * 0.9, (cH / 2) * 1.1)
-    const shrubC = new ShrubLoop(300, 128, (cW / 2) * 0.7, (cH / 2) * 0.9)
+    const shrubA = new ShrubLoop(300, 128, (cW / 2) * 1.5, (cH / 2) * 1.1)
+    const shrubB = new ShrubLoop(300, 128, (cW / 2) * 0.9, (cH / 2) * 1.0)
+    const shrubC = new ShrubLoop(300, 128, (cW / 2) * 0.7, (cH / 2) * 0.95)
 
     loops.push(shrubA, shrubB, shrubC)
 }

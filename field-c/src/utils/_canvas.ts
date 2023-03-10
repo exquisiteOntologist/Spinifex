@@ -12,7 +12,7 @@ export const createCanvas = (width: number, height: number): CanvasRenderingCont
     canvas.height = height
     canvas.style.display = 'hidden'
 
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     // ctx.fillStyle = 'rgba(0,0,0,0)'
     // ctx.fillRect(0, 0, canvas.width, canvas.height)

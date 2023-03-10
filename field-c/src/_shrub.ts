@@ -5,9 +5,9 @@ import { FramesAngles, Loopable, LoopOut } from "./utils/_anim"
 import { createCanvas } from "./utils/_canvas"
 import { deviate, flip } from "./utils/_common"
 
-export const cShrubA: RGB = [33, 29, 16]
-export const cShrubB: RGB = [43, 42, 25]
-export const cShrubC: RGB = [55, 50, 32]
+export const cShrubA: RGB = [33, 29, 16, 0.7]
+export const cShrubB: RGB = [43, 42, 25, 0.7]
+export const cShrubC: RGB = [55, 50, 32, 0.7]
 export const cShrubs: RGB[] = [cShrubA, cShrubB, cShrubC]
 
 const rotStart = -90
@@ -55,7 +55,7 @@ export const createShrub = (x: number, y: number): Shrub => {
                 x: sX + 0.5,
                 y: y + tI + curveY + 0.5,
                 h: sH,
-                c: `rgba(${sC.join(',')})`,
+                c: `rgb(${sC.join(',')})`,
                 rot: i
             }
 
@@ -95,7 +95,7 @@ export class ShrubLoop implements Loopable<Shrub> {
     instance = {}
     reverseLoop = false
     rendered: FramesAngles<Shrub> = { rFrames: { 0: [] }, rState: { 0: [] } }
-    targetFrames = 180 // 180
+    targetFrames = 10 // 180
     frame = 0
     renderPass = 0
 
@@ -103,13 +103,13 @@ export class ShrubLoop implements Loopable<Shrub> {
         let renderedFrames = this.rendered.rFrames[this.angle]
         if (!renderedFrames) renderedFrames = this.rendered.rFrames[this.angle] = []
 
-        if (this.frame === 0 && renderedFrames.length) {
-            // const brokenFrame = {...renderedFrames[0]}
-            // console.log('broken frame', brokenFrame)
-            // renderedFrames.splice(0, 1, renderedFrames[renderedFrames.length - 1]) // first frame is shit
-            renderedFrames.splice(0, 1) // first frame is shit
-            // this.frame = 1
-        }
+        // if (this.frame === 0 && renderedFrames.length) {
+            // If the first frame doesn't load or flashes it's because the
+            // HTML context's "willReadFrequently" property was not set to true
+            // When true the Canvas is rendered via CPU instead of GPU
+            // & it takes less effort for the device to get the bitmap
+            // renderedFrames.splice(0, 1) // first frame is shit
+        // }
 
 
         const frameAlreadyRendered = this.frame < renderedFrames.length
@@ -119,10 +119,7 @@ export class ShrubLoop implements Loopable<Shrub> {
             this.draw()
             renderedFrames.push(this.ctx.getImageData(0, 0, this.ctx.canvas.width, this.ctx.canvas.height))
         }
-        
-        // const renderedFrame = renderedFrames[Math.min(Math.round(Math.random() * 10), renderedFrames.length - 1)]
-        // const frameIndex = (renderedFrames.length > 1 && flip() === 1) ? 2: 0
-        // const renderedFrame = renderedFrames[frameIndex]
+
         const renderedFrame = renderedFrames[this.frame]
 
         if (!renderedFrame) console.error('no rendered frame', this.frame, renderedFrames)
@@ -132,8 +129,6 @@ export class ShrubLoop implements Loopable<Shrub> {
 
         this.frame = (this.frame + 1) % this.targetFrames
         this.renderPass++
-
-        // console.log('rendered frame', this.targetFrames, renderedFrames, this.frame, /* pFrame, frameIndex, */ renderedFrame)
 
         return { loopable: this, imageData: renderedFrame }
     }

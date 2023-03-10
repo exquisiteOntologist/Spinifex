@@ -29,6 +29,8 @@ export interface GrassBlade {
     lW: number,
     /** Rotation */
     rot: number
+    /** When trampled, trample to the left? */
+    trampleLeft: boolean
 }
 
 export const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade, objects: Presence[]) => {
@@ -46,7 +48,8 @@ export const drawGrassBlade = (ctx: CanvasRenderingContext2D, b: GrassBlade, obj
     ctx.resetTransform()
 }
 
-const rotGrassDown = -1 * deviate(70, 1.5, -1.5)
+const rotGrassDownLeft = -1 * deviate(60, 1.5, -1.5)
+const rotGrassDownRight = -1 * deviate(40, 1.5, -1.5)
 const rotGrassUp = -1 * deviate(30, 1.5, -1.5)
 
 export const updateGrassBlade = (b: GrassBlade, objects: Presence[]) => {
@@ -54,8 +57,10 @@ export const updateGrassBlade = (b: GrassBlade, objects: Presence[]) => {
     b.x1 = maxMin(b.x1 + shift, 10, 0 - 10)
     b.x2 = maxMin(b.x2 + shift, 50, 0 - 50)
 
-    if (objects.map(pos).some(o => b.x > o.xL && b.x < o.xR && b.y > o.zT && b.y < o.zB)) {
-        b.rot = rotGrassDown
+    const beingTrampled = objects.map(pos).some(o => b.x > o.xL && b.x < o.xR && b.y > o.zT && b.y < o.zB)
+
+    if (beingTrampled) {
+        b.rot = b.trampleLeft ? rotGrassDownLeft : rotGrassDownRight
     } else {
         b.rot = rotGrassUp
     }
@@ -82,7 +87,8 @@ export const createGrassBlade = (x: number, y: number, rgbBase: RGB = cWhite): G
         rad: deviate(30, 1.5, 0.5),
         c: `rgba(${rgbBase[0] + rgbDev}, ${rgbBase[1] + rgbDev}, ${rgbBase[2] + rgbDev}, ${alpha})`,
         lW: 1,
-        rot: rotGrassUp
+        rot: rotGrassUp,
+        trampleLeft: flip() === 1
     }
 
     return b
