@@ -5,9 +5,9 @@ import { FramesAngles, Loopable, LoopOut } from "./utils/_anim"
 import { createCanvas } from "./utils/_canvas"
 import { deviate, flip, randRum } from "./utils/_common"
 
-export const cShrubA: RGB = [33, 29, 16, 0.7]
-export const cShrubB: RGB = [43, 42, 25, 0.7]
-export const cShrubC: RGB = [55, 50, 32, 0.7]
+export const cShrubA: RGB = [33, 29, 16, 0.3]
+export const cShrubB: RGB = [43, 42, 25, 0.3]
+export const cShrubC: RGB = [55, 50, 32, 0.3]
 export const cShrubs: RGB[] = [cShrubA, cShrubB, cShrubC]
 
 const rotStart = -90

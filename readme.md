@@ -5,6 +5,7 @@ Spinifex drawing experiments.
 To evolve into my own superior web-based game like Shadow of the Colossus or Bloodborne.
 
 ![Screenshot 1](./content/screenshot-2023-02-28.jpg)
+![Screenshot 2](./content/field-c.jpg)
 
 ## Sample Images
 
