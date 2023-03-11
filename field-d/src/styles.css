@@ -1,0 +1,20 @@
+html,
+body {
+    font-family: 'Georgia';
+}
+
+body {
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+.comic {
+    font-family: cursive;
+}
+
+canvas {
+    max-width: 100%;
+}
