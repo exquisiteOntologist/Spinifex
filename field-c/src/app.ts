@@ -1,7 +1,7 @@
 import { Loopable, animate, renderAnims } from './utils/_anim'
 import { animFrames } from './utils/_debugging'
 import { createBall, drawBall, initBallControl, updateBall } from './_ball'
-import { drawBackground, drawBasicGround } from './_landscape'
+import { drawBackground, drawBasicGround, drawSkyBackground } from './_landscape'
 import { ShrubLoop } from './_shrub'
 import { cStraw, cStrawLight, SpinifexLoop } from './_spinifex'
 import { Presence } from './_types'
@@ -22,6 +22,7 @@ const sceneObjects: Presence[] = [b]
 const draw = async (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, cW, cH)
     drawBackground(ctx, 0, 0, cW, cH)
+    drawSkyBackground(ctx, 0, 0, cW, cH * 0.6)
     drawBasicGround(ctx, -(cW * 0.2), cYc, cW * 1.5, cH * 0.75)
 
     const renders = animate(loops, sceneObjects)
@@ -39,11 +40,12 @@ const initMain = () => {
     const spinifexA = new SpinifexLoop(1280, 180, cXc - 30, cYc * 0.9, cStraw)
     const spinifexB = new SpinifexLoop(1000, 180, cXc * 1.3, cYc * 1.03, cStrawLight)
     const spinifexC = new SpinifexLoop(800, 180, cXc, cYc * 1.07, cStraw)
+    const spinifexD = new SpinifexLoop(1600, 180, cXc, cYc * 0.95, cStraw)
     const shrubA = new ShrubLoop(150, 128, cXc * 1.5, cYc * 1.1)
     const shrubB = new ShrubLoop(150, 128, cXc * 0.9, cYc * 1.03)
     const shrubC = new ShrubLoop(150, 128, cXc * 0.7, cYc * 0.88)
 
-    loops.push(spinifexA, spinifexB, spinifexC, shrubA, shrubB, shrubC)
+    loops.push(spinifexA, spinifexB, spinifexC, spinifexD, shrubA, shrubB, shrubC)
     loops.sort((a, b) => a.y - b.y)
 }
 
