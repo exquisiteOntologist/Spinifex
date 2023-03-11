@@ -3,7 +3,7 @@
 import { RGB } from "./_types"
 import { FramesAngles, Loopable, LoopOut } from "./utils/_anim"
 import { createCanvas } from "./utils/_canvas"
-import { deviate, flip } from "./utils/_common"
+import { deviate, flip, randRum } from "./utils/_common"
 
 export const cShrubA: RGB = [33, 29, 16, 0.7]
 export const cShrubB: RGB = [43, 42, 25, 0.7]
@@ -14,7 +14,7 @@ const rotStart = -90
 const rotEnd = rotStart * -1
 const numSteps = rotEnd - rotStart
 const thickness = 6
-const width = 120
+const defaultWidth = 120
 const height = 60
 const heightSag = 5
 
@@ -33,19 +33,21 @@ export interface Shrub {
     leaves?: ShrubLeaf[]
 }
 
-export const createShrub = (x: number, y: number): Shrub => {
+export const createShrub = (width: number, x: number, y: number): Shrub => {
     const leaves: ShrubLeaf[] = []
+    const canvasCenter = x + (width / 2)
+    const shrubWidth = Math.min(defaultWidth, width * 0.7)
 
     for (let tI = 0; tI < thickness; tI++) {
         const offset = tI * 2
-        const baseWidth = width - offset
+        const baseWidth = shrubWidth - offset
         const baseHeight = height - ((height / thickness) * tI)
-        const xStart = -(baseWidth / 2) - (offset / 2)
+        // const xStart = -(baseWidth / 2) - (offset / 2)
         
         let iP: number = 0
         for (let i = rotStart; i < rotEnd; i++) {
             const sC = cShrubs[(tI + iP) % (cShrubs.length - 1)]
-            const sX = x + xStart + (baseWidth / numSteps * i) + deviate(1, 3, -3)
+            const sX = canvasCenter + /* xStart + */ (baseWidth / numSteps * i) + randRum(2, -2)
             // curveY is used to add to Height and also to say on the Y
             const curveI = (i < 0 ? i : -i)
             const curveY = heightSag / (numSteps / 2) * curveI - (curveI / numSteps)
@@ -68,7 +70,7 @@ export const createShrub = (x: number, y: number): Shrub => {
 }
 
 export const drawShrub = (ctx: CanvasRenderingContext2D, x: number, y: number, shrub: Shrub) => {
-    if (!shrub.leaves?.length) Object.assign(shrub, createShrub(x, y)) // <- class version doesn't need this
+    if (!shrub.leaves?.length) Object.assign(shrub, createShrub(ctx.canvas.width, x, y)) // <- class version doesn't need this
 
     shrub.leaves?.forEach((leaf, i) => {
         ctx.beginPath()
@@ -135,7 +137,7 @@ export class ShrubLoop implements Loopable<Shrub> {
     
     draw = () => drawShrub(this.ctx, this.x, this.y, this.instance)
     
-    init = () => this.instance = createShrub(this.ctx.canvas.width / 2, this.ctx.canvas.height / 2)
+    init = () => this.instance = createShrub(this.ctx.canvas.width, 0, this.ctx.canvas.height / 2)
 
     constructor(width: number, height: number, x: number, y: number) {
         this.ctx = createCanvas(width, height)

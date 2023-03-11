@@ -18,6 +18,6 @@ export interface Size {
 
 export interface Presence extends XY, Size {}
 
-export type RGB = [number, number, number]
+export type RGB = [number, number, number, number?]
 
 

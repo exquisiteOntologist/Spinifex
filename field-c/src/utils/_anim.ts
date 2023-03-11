@@ -1,4 +1,4 @@
-import { XY } from "../_types";
+import { Presence, XY } from "../_types";
 
 export type RenderedFrame = ImageData
 export type DegreeKey = number;
@@ -36,22 +36,52 @@ export interface Loopable<AnimType, FrameState = AnimType> extends XY {
     /** Reverse the frames when reaching the last frame? */
     reverseLoop?: boolean,
     /** Called by an external animator */
-    render: () => LoopOut<AnimType, FrameState>
+    render: (sceneObjects?: Presence[]) => LoopOut<AnimType, FrameState>
     /** Call to perform actual drawing */
-    draw: (degree: number) => void
+    draw: (degree: number, sceneObjects: Presence[]) => void
     /** Initialize properties */
     init: () => void
 }
 
 
-export const animate = (lArray: Loopable<unknown>[]): LoopOut<unknown, unknown>[] => lArray.map(l => l.render())
+export const animate = (lArray: Loopable<unknown>[], sceneObjects?: Presence[]): LoopOut<unknown, unknown>[] => lArray.map(l => l.render(sceneObjects))
 
-export const renderAnims = async (ctx: CanvasRenderingContext2D, rArray: LoopOut<unknown, unknown>[]) => await Promise.all(rArray.map(async r => {
+/**
+ * Draw an array of renders.
+ * Despite being async, must synchronously draw each render, otherwise the layering will be based on execution speed.
+ */
+export const renderAnims = async (ctx: CanvasRenderingContext2D, rArray: LoopOut<unknown, unknown>[], markCorners: boolean = true) => await new Promise((resolve, reject) => {
+    // by doing reduce it makes the async functions more synchronous, to preserve layer order
+    // https://stackoverflow.com/a/48512613
+    rArray.reduce(
+        (p, r) => p.then(() => renderAnim(ctx, r, markCorners)),
+        Promise.resolve()).then(() => resolve(true)).catch(() => reject(false)
+    );
+})
+
+const renderAnim = async (ctx: CanvasRenderingContext2D, r: LoopOut<unknown, unknown>, markCorners: boolean = true) => {
     const bitmap = await createImageBitmap(r.imageData)
-    ctx.drawImage(bitmap, r.loopable.x, r.loopable.y)
+    const xLeft = r.loopable.x - (bitmap.width / 2)
+    const xRight = xLeft + bitmap.width
+    const yTop = r.loopable.y - (bitmap.height / 2)
+    const yBottom = yTop + bitmap.height
+    // draw so image's bottom-center is approx X and Y
+    ctx.drawImage(bitmap, xLeft, yTop + (bitmap.height / 2))
 
-    // putImageData doesn't respect transparent pixels (drawImage does)
-    // ctx.putImageData(r.imageData, 0, 0)
-}))
+    if (markCorners) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.resetTransform()
+        ctx.fillStyle = 'yellow'
+        // top left
+        ctx.fillRect(xLeft, r.loopable.y, 1, 1)
+        // top right
+        ctx.fillRect(xRight - 1, r.loopable.y, 1, 1)
+        // bottom left
+        ctx.fillRect(xLeft, yBottom - 1, 1, 1)
+        // bottom right
+        ctx.fillRect(xRight - 1, yBottom - 1, 1, 1)
+    }
+}
 
+// export const oldRenderAnims = async (ctx: CanvasRenderingContext2D, rArray: LoopOut<unknown, unknown>[], markCorners: boolean = true) => Promise.all(rArray.map(r => renderAnim(ctx, r, markCorners)))
 

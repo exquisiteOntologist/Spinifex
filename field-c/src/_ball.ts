@@ -86,8 +86,13 @@ export const drawBall = (ctx: CanvasRenderingContext2D, b: Ball) => {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
     ctx.beginPath()
     // ctx.ellipse(0, 0, 32, 32, Math.PI / 4, 0, 0, false)
-    ctx.ellipse(b.x, b.y, b.width / 2, b.width / 2, Math.PI / 4, 0, 2 * Math.PI);
+
+    // const xCenter = b.x + (b.width / 2)
+    const xCenter = b.x
+    ctx.ellipse(xCenter, b.y - (b.width / 2), b.width / 2, b.width / 2, Math.PI / 4, 0, 2 * Math.PI);
     ctx.fill()
     ctx.closePath()
     ctx.resetTransform()
+    ctx.fillStyle = 'pink'
+    ctx.fillRect(xCenter, b.y - 1, 1, 1)
 }
