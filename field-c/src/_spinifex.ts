@@ -39,6 +39,7 @@ export interface GrassBlade {
 
 export interface Spinifex {
     x: number,
+    xLeft: number
     y: number,
     blades: GrassBlade[]
 }
@@ -67,9 +68,8 @@ export const updateGrassBlade = (b: GrassBlade, spin: Spinifex, objects: Presenc
     b.x1 = maxMin(b.x1 + shift, 10, 0 - 10)
     b.x2 = maxMin(b.x2 + shift, 50, 0 - 50)
 
-    // TODO: Handle trampling with (b.x + b.cX) > o.xL etc
-    // note x point on main canvas is x - own canvas half width
-    const beingTrampled = objects.map(pos).some(o => (spin.x + b.cX) > o.xL && (spin.y + b.cX) < o.xR && (spin.x + b.cY) > o.zT && (spin.y + b.cY) < o.zB)
+    // note x left edge point on main canvas is x - own canvas half width (spin.xLeft)
+    const beingTrampled = objects.map(pos).some(o => (spin.xLeft + b.cX) > o.xL && (spin.xLeft + b.cX) < o.xR && (spin.y + b.cY) > o.zT && (spin.y + b.cY) < o.zB)
 
     if (beingTrampled) {
         b.rot = b.trampleLeft ? rotGrassDownLeft : rotGrassDownRight
@@ -133,6 +133,7 @@ export const drawGrassBlades = (ctx: CanvasRenderingContext2D, cX: number, cY: n
 export const createSpinifex = (x: number, y: number, cX: number, cY: number, width: number, rgb: RGB): Spinifex => {
     const spinifex: Spinifex = {
         x,
+        xLeft: x - (width / 2),
         y,
         blades: createGrassBlades(cX, cY, width, rgb, [])
     }
@@ -152,7 +153,7 @@ export class SpinifexLoop implements Loopable<Spinifex> {
     alive = true
     angle = 0
     ctx: CanvasRenderingContext2D
-    instance: Spinifex = { x: 0, y: 0, blades: [] }
+    instance: Spinifex = { x: 0, xLeft: 0, y: 0, blades: [] }
     reverseLoop = false
     rendered: FramesAngles<Spinifex> = { rFrames: { 0: [] }, rState: { 0: [] } }
     targetFrames = 30 // 180

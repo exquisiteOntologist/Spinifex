@@ -2,9 +2,8 @@ import { Loopable, animate, renderAnims } from './utils/_anim'
 import { animFrames } from './utils/_debugging'
 import { createBall, drawBall, initBallControl, updateBall } from './_ball'
 import { drawBackground, drawBasicGround } from './_landscape'
-// import { drawGhost } from './_ghosts'
-import { Shrub, ShrubLoop } from './_shrub'
-import { cStraw, cStrawLight, drawGrassBlades, GrassBlade, SpinifexLoop } from './_spinifex'
+import { ShrubLoop } from './_shrub'
+import { cStraw, cStrawLight, SpinifexLoop } from './_spinifex'
 import { Presence } from './_types'
 
 const mainCanvas = document.getElementById('mainCanvas') as HTMLCanvasElement
@@ -25,7 +24,6 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
     drawBackground(ctx, 0, 0, cW, cH)
     drawBasicGround(ctx, -(cW * 0.2), cYc, cW * 1.5, cH * 0.75)
 
-    // TODO: Pass scene objects here for handling in animations
     const renders = animate(loops, sceneObjects)
     renders.sort((a, b) => a.loopable.y - b.loopable.y) // if only static objects not necessary
     await renderAnims(ctx, renders)
@@ -41,9 +39,9 @@ const initMain = () => {
     const spinifexA = new SpinifexLoop(1280, 180, cXc - 30, cYc * 0.9, cStraw)
     const spinifexB = new SpinifexLoop(1000, 180, cXc * 1.3, cYc * 1.03, cStrawLight)
     const spinifexC = new SpinifexLoop(800, 180, cXc, cYc * 1.07, cStraw)
-    const shrubA = new ShrubLoop(150, 128, (cXc) * 1.5, cYc * 1.1)
-    const shrubB = new ShrubLoop(150, 128, (cXc) * 0.9, cYc * 1.03)
-    const shrubC = new ShrubLoop(150, 128, (cXc) * 0.7, cYc * 0.85)
+    const shrubA = new ShrubLoop(150, 128, cXc * 1.5, cYc * 1.1)
+    const shrubB = new ShrubLoop(150, 128, cXc * 0.9, cYc * 1.03)
+    const shrubC = new ShrubLoop(150, 128, cXc * 0.7, cYc * 0.88)
 
     loops.push(spinifexA, spinifexB, spinifexC, shrubA, shrubB, shrubC)
     loops.sort((a, b) => a.y - b.y)
