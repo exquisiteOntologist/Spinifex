@@ -1,6 +1,6 @@
 const times: number[] = [];
 let fps: number = 0;
-export const animFrames = (ctx: CanvasRenderingContext2D, cW: number, cH: number) => {
+export const printMetaFPS = (ctx: CanvasRenderingContext2D, cW: number, cH: number) => {
     const now = performance.now();
     while (times.length > 0 && times[0] <= now - 1000) {
       times.shift();

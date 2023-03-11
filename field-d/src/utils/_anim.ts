@@ -51,6 +51,8 @@ export const animate = (lArray: Loopable<unknown>[], sceneObjects?: Presence[]):
  * Despite being async, must synchronously draw each render, otherwise the layering will be based on execution speed.
  */
 export const renderAnims = async (ctx: CanvasRenderingContext2D, rArray: LoopOut<unknown, unknown>[], markCorners: boolean = true) => await new Promise((resolve, reject) => {
+    rArray.sort((a, b) => a.loopable.y - b.loopable.y) // if only static objects not necessary
+    
     // by doing reduce it makes the async functions more synchronous, to preserve layer order
     // https://stackoverflow.com/a/48512613
     rArray.reduce(

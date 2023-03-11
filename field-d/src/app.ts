@@ -1,7 +1,8 @@
 import { Loopable, animate, renderAnims } from './utils/_anim'
-import { animFrames } from './utils/_debugging'
+import { printMetaFPS } from './utils/_debugging'
 import { createBall, drawBall, initBallControl, updateBall } from './_ball'
 import { drawBackground, drawBasicGround, drawSkyBackground } from './_landscape'
+import { drawLetterbox } from './_overlays'
 import { ShrubLoop } from './_shrub'
 import { cStraw, cStrawLight, SpinifexLoop } from './_spinifex'
 import { Presence } from './_types'
@@ -26,12 +27,13 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
     drawBasicGround(ctx, -(cW * 0.2), cYc, cW * 1.5, cH * 0.75)
 
     const renders = animate(loops, sceneObjects)
-    renders.sort((a, b) => a.loopable.y - b.loopable.y) // if only static objects not necessary
     await renderAnims(ctx, renders)
-    animFrames(ctx, cW, cH)
 
     updateBall(b)
     drawBall(ctx, b)
+
+    drawLetterbox(ctx)
+    printMetaFPS(ctx, cW, cH)
 
     window.requestAnimationFrame(() => draw(ctx))
 }

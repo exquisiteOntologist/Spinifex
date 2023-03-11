@@ -60,17 +60,29 @@ The theme issa monsters based on countrys crests and the symbolism.
 - Giant sandhills
 
 ### Checklist
-- [ ] Draw ghost
-	- [x] Head
-	- [ ] Face
-	- [x] Body
-	- [ ] Feet
-		- [ ] [Use intersects](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation)
-- [ ] Create frame-saving system
-	- [ ] Draw to offscreen canvas?
-	- [x] Draw to separate canvas
-	- [x] Draw other canvas to main canvas
-	- [ ] Fix issue where first frame is so different it “flashes”
+- [x] Create frame-saving system
+- [ ] Create render-saving system for static graphics (graphics that don't animate)
+- [ ] Create clone instancing of Loopables that reference the master Loopables rendered frames
+- [ ] Create Loopable spreader that can auto place multiple instances of a thing across a wide range
+    - This will be mostly used for grass, but also bushes
+- [ ] Create a Loopable spreader that can fill vertically
+- [ ] Create primitive way to linearly transition to first frame
+    - So with saved frames the last frame and first frame are in about same place
+    - Work out at what speed the thing animates at and how far it is from first frame,
+        - when at last possible chance to transition smoothly do so
+            - this avoids forcing everything to transition artificially at exact same time
+- [ ] Reanimate on collision
+    - [ ] Create way to retrieve state from saved frame and set it as current state
+    - [ ] When colliding reanimate, and when not-colliding save frames again
+- [ ] Introduce dimension Z
+- [ ] Distant things smaller in view with less detail and blurred
+- [ ] Trees
+- [ ] Add a Tiger
+    - It has to be a Russian tiger otherwise people will think it's set in Africa
+- [ ] Add a player-controlled protagonist
+- [ ] Introduce noise
+    - A cheap way to introduce detail
+
 
 #### Detail
 - Quasi-3D Graphics
