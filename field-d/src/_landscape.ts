@@ -6,11 +6,13 @@ export const drawBackground = (ctx: CanvasRenderingContext2D, x, y, w, h) => {
 }
 
 const skyBlueHemishphere = 'rgb(83, 100, 128)'
+const skyBlueMiddle = 'rgb(103, 116, 134)'
 const skyBlueHorizon = 'rgb(115, 118, 126)'
 
 export const drawSkyBackground = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) => {
     const skyGrad = ctx.createLinearGradient(0, 0, 0, h)
     skyGrad.addColorStop(0, skyBlueHemishphere)
+    skyGrad.addColorStop(0.7, skyBlueMiddle)
     skyGrad.addColorStop(1, skyBlueHorizon)
 
     ctx.fillStyle = skyGrad

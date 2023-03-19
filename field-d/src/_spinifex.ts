@@ -152,6 +152,8 @@ export class SpinifexLoop implements Loopable<Spinifex> {
     y: number
     alive = true
     angle = 0
+    repeatWidth
+    repeatDistanceX
     ctx: CanvasRenderingContext2D
     instance: Spinifex = { x: 0, xLeft: 0, y: 0, blades: [] }
     reverseLoop = false
@@ -203,13 +205,15 @@ export class SpinifexLoop implements Loopable<Spinifex> {
     
     init = () => this.instance = createSpinifex(this.x, this.y, this.cX, this.cY, this.width, this.rgb)
 
-    constructor(width: number, height: number, x: number, y: number, rgb: RGB) {
+    constructor(width: number, height: number, x: number, y: number, rgb: RGB, repeatWidth?: number) {
         this.ctx = createCanvas(width, height)
         this.x = x,
         this.y = y
         this.cX = 0
         this.cY = this.ctx.canvas.height / 2
         this.rgb = rgb
+        this.repeatWidth = repeatWidth
+        this.repeatDistanceX = this.width * 0.7
 
         this.init()
     }

@@ -39,10 +39,10 @@ const draw = async (ctx: CanvasRenderingContext2D) => {
 }
 
 const initMain = () => {
-    const spinifexA = new SpinifexLoop(1280, 180, cXc - 30, cYc * 0.9, cStraw)
-    const spinifexB = new SpinifexLoop(1000, 180, cXc * 1.3, cYc * 1.03, cStrawLight)
-    const spinifexC = new SpinifexLoop(800, 180, cXc, cYc * 1.07, cStraw)
-    const spinifexD = new SpinifexLoop(1600, 180, cXc, cYc * 0.95, cStraw)
+    const spinifexA = new SpinifexLoop(1280, 180, 0, cYc * 0.9, cStraw, cW)
+    const spinifexB = new SpinifexLoop(1000, 180, 0, cYc * 1.03, cStrawLight, cW)
+    const spinifexC = new SpinifexLoop(800, 180, 0, cYc * 1.07, cStraw, cW)
+    const spinifexD = new SpinifexLoop(1600, 180, 0, cYc * 0.95, cStraw, cW)
     const shrubA = new ShrubLoop(150, 128, cXc * 1.5, cYc * 1.2)
     const shrubB = new ShrubLoop(150, 128, cXc * 0.9, cYc * 1.03)
     const shrubC = new ShrubLoop(150, 128, cXc * 0.7, cYc * 0.88)

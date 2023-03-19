@@ -22,6 +22,10 @@ export interface Loopable<AnimType, FrameState = AnimType> extends XY {
     alive: boolean
     /** Current angle we are rendering */
     angle: number
+    /** A width or total distance to repeat the loopable along when rendering */
+    repeatWidth?: number
+    /** How much X before repeating? */
+    repeatDistanceX?: number
     /** Parent rendering context */
     pCtx?: CanvasRenderingContext2D
     /** Own canvas rendering context */
@@ -67,8 +71,17 @@ const renderAnim = async (ctx: CanvasRenderingContext2D, r: LoopOut<unknown, unk
     const xRight = xLeft + bitmap.width
     const yTop = r.loopable.y - (bitmap.height / 2)
     const yBottom = yTop + bitmap.height
+    const dy = yTop + (bitmap.height / 2)
     // draw so image's bottom-center is approx X and Y
-    ctx.drawImage(bitmap, xLeft, yTop + (bitmap.height / 2))
+    ctx.drawImage(bitmap, xLeft, dy)
+
+    if (r.loopable.repeatWidth) {
+        // start repeated/stamped renders from end of last
+        const repeatDistanceX = r.loopable.repeatDistanceX || bitmap.width
+        for (let repX = repeatDistanceX; repX < r.loopable.repeatWidth; repX += repeatDistanceX) {
+            ctx.drawImage(bitmap, xLeft + repX, dy)
+        }
+    }
 
     if (markCorners) {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
