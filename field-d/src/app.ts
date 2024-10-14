@@ -43,11 +43,13 @@ const initMain = () => {
     const spinifexB = new SpinifexLoop(1000, 180, 0, cYc * 1.03, cStrawLight, cW)
     const spinifexC = new SpinifexLoop(800, 180, 0, cYc * 1.07, cStraw, cW)
     const spinifexD = new SpinifexLoop(1600, 180, 0, cYc * 0.95, cStraw, cW)
+    const spinifexE = new SpinifexLoop(1600, 180, 0, cYc * 1.3, cStrawLight, cW)
+    const spinifexF = new SpinifexLoop(1600, 180, 100, cYc * 1.5, cStrawLight, cW)
     const shrubA = new ShrubLoop(150, 128, cXc * 1.5, cYc * 1.2)
     const shrubB = new ShrubLoop(150, 128, cXc * 0.9, cYc * 1.03)
     const shrubC = new ShrubLoop(150, 128, cXc * 0.7, cYc * 0.88)
 
-    loops.push(spinifexA, spinifexB, spinifexC, spinifexD, shrubA, shrubB, shrubC)
+    loops.push(spinifexA, spinifexB, spinifexC, spinifexD, spinifexE, spinifexF, shrubA, shrubB, shrubC)
     loops.sort((a, b) => a.y - b.y)
 }
 
